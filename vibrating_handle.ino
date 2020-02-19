@@ -5,8 +5,8 @@ const int distance = 10;
 
 void setup() {
    Serial.begin(9600); // Starting Serial Terminal
-   Serial2.begin(9000); //starting serial comm for tx and rx 1 
-   Serial1.begin(9600);
+   //Serial2.begin(9600); //starting serial comm for tx and rx 1 
+   //Serial1.begin(9600);
   delay(10000);
   
 }
