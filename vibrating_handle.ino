@@ -1,26 +1,37 @@
-const int pingPin = 7; // Trigger Pin of Ultrasonic Sensor
+#include<SoftwareSerial.h>
+SoftwareSerial BTSerial(10,11); // Pin 10 is Tx and Pin 11 is Rx
+
+const int trigPin = 7; // Trigger Pin of Ultrasonic Sensor
 const int echoPin = 6; // Echo Pin of Ultrasonic Sensor
 const int motorct = 4;
-const int distance = 10;
+const int distance = 1; //inches
+
 
 void setup() {
    Serial.begin(9600); // Starting Serial Terminal
-   //Serial2.begin(9600); //starting serial comm for tx and rx 1 
-   //Serial1.begin(9600);
+
+      
+////////////////////////////////////////Bluetooth   
+   BTSerial.begin(38400); 
+   Serial.begin(38400);
+///////////////////////////////////////   
+
+
   delay(10000);
   
 }
 
 void loop() {
+ ////////////////////////////////////////////////////////////////////Perimeters  
    long duration, cm, meters;
    int inches;
    pinMode(motorct, OUTPUT);
-   pinMode(pingPin, OUTPUT);
-   digitalWrite(pingPin, LOW);
+   pinMode(trigPin, OUTPUT);
+   digitalWrite(trigPin, LOW);
    delayMicroseconds(2);
-   digitalWrite(pingPin, HIGH);
+   digitalWrite(trigPin, HIGH);
    delayMicroseconds(10);
-   digitalWrite(pingPin, LOW);
+   digitalWrite(trigPin, LOW);
    pinMode(echoPin, INPUT);
    duration = pulseIn(echoPin, HIGH);
    inches = microsecondsToInches(duration);
@@ -31,7 +42,8 @@ void loop() {
    Serial.print(cm);
    Serial.print("cm");
    Serial.println();
-
+ ///////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////SONAR SENSOR
    delay(100);
 
        if(inches <= distance){
@@ -41,19 +53,12 @@ void loop() {
      
      
    
-  if (Serial1.available()) {
-    Serial1.write(inches);
+  if (Serial.available()) {
+    Serial.write(inches);
     Serial.print("sent info:");
     Serial.println(inches);
   }
-
-  
-
-  
-
 }
-
-
 
 
 long microsecondsToInches(long microseconds) {
@@ -62,4 +67,18 @@ long microsecondsToInches(long microseconds) {
 
 long microsecondsToCentimeters(long microseconds) {
    return microseconds / 29 / 2;
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////BLUETOOTH RECEIVE FROM JETSON
+ 
+   if(BTSerial.available()){
+    Serial.write((BTSerial.read())); //Display the response from BT module
+  }
+  if(Serial.available()){
+    BTSerial.write((Serial.read())); //Display AT commands sent
+  }
+ 
+/////////////////////////////////////////////////////////////////////////
 }
